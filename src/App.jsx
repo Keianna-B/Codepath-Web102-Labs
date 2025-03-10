@@ -1,84 +1,114 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
-//import Card from './components/Card.jsx';
+
 const cardSet = [{
   "id": 1,
   "question": "¿Qué es este animal?",
   "answer": "El pato",
-  "image": "images/Baby-Duck.jpg",
+  "image": ".src/assets/Baby-Duck.jpg",
   "category": "vocabulary",
 },{
   "id": 2,
   "question": "¿Qué es este animal?",
   "answer": "El cerdo",
-  "image": "images/Pig.jpg",
+  "image": ".src/assets/Pig.jpg",
   "category": "vocabulary",
 },{
   "id": 3,
   "question": "¿Qué es este animal?",
   "answer": "La oveja",
-  "image": "Sheep.jpg",
+  "image": ".src/assets/Sheep.jpg",
   "category": "vocabulary",
 },{
   "id": 4,
   "question": "¿Qué es este animal?",
   "answer": "El canguro",
-  "image": "Kangaroo.jpg",
+  "image": ".src/assets/Kangaroo.jpg",
   "category": "vocabulary",
 },{
   "id": 5,
   "question": "¿Qué es este animal?",
   "answer": "El cabro",
-  "image": "Goat.jpg",
+  "image": ".src/assets/Goat.jpg",
   "category": "vocabulary",
 },{
   "id": 6,
   "question": "¿Qué es este animal?",
   "answer": "La tortuga",
-  "image": "Turtle.jpg",
+  "image": ".src/assets/Turtle.jpg",
   "category": "vocabulary",
 },
 {
   "id": 7,
   "question": "What is the present tense of the verb 'hablar'?",
   "answer": "hablo, hablas, habla, hablamos, hablan",
-  "image": "AR-Present.jpg",
+  "image": ".src/assets/AR-Present.jpg",
   "category": "conjugation",
 },
 {
   "id": 8,
   "question": "What is the present tense of the verb 'comer'?",
   "answer": "como, comes, come, comemos, comen",
-  "image": "ER-Present.jpg",
+  "image": ".src/assets/ER-Present.jpg",
   "category": "conjugation",
 },{
   "id": 9,
   "question": "What is the present tense of the verb 'vivir'?",
   "answer": "vivo, vives, vive, vivimos, viven",
-  "image": "IR-Present.jpg",
+  "image": ".src/assets/IR-Present.jpg",
   "category": "conjugation",
 },{
   "id": 10,
   "question": "What is the past preterite tense of the verb 'hablar'?",
   "answer": "hablé, hablaste, habló, hablamos, hablaron",
-  "image": "AR-Past.jpg",
+  "image": ".src/assets/AR-Past.jpg",
   "category": "conjugation",
 },{
   "id": 11,
   "question": "What is the past preterite tense of the verb 'comer'?",
   "answer": "comí, comiste, comió, comimos, comieron",
-  "image": "ER&IR-Past.jpg",
+  "image": ".src/assets/ER&IR-Past.jpg",
   "category": "conjugation",
 },{
   "id": 12,
   "question": "What is the past preterite tense of the verb 'vivir'?",
   "answer": "viví, viviste, vivió, vivimos, vivieron",
-  "image": "ER&IR-Past.jpg",
+  "image": ".src/assets/ER&IR-Past.jpg",
   "category": "conjugation",
 }
 ]
 
-function App() {
+let currentCard = cardSet[Math.floor(Math.random() * cardSet.length)];
+let drawnCards = new Array(12);
+drawnCards.fill(false);
+let isFlipped = false;
+const flipCard = () => {
+  isFlipped = !isFlipped;
+}
+const getRandomCard = () => {
+  if (drawnCards.every((card) => card == true)){
+    return currentCard;
+  }
+    nextCard = cardSet[Math.floor(Math.random() * cardSet.length)];
+  while (drawnCards[nextCard.id - 1] === true){
+    nextCard = cardSet[Math.floor(Math.random() * cardSet.length)];
+  }
+  currentCard = nextCard;
+  drawnCards[currentCard.id - 1] = true;
+  return currentCard;
+}
+
+const backButton = () => {
+  if (currentCard.id > 1) {
+    currentCard = cardSet[currentCard.id - 2];
+  }
+}
+const nextButton = () => {
+  currentCard = getRandomCard();
+  drawnCards[currentCard.id - 1] = true;
+}
+
+function App(){
   return (
     <>
       <div id="header">
@@ -86,36 +116,41 @@ function App() {
         <p id="description">Use these Spanish flash cards to test your knowledge</p>
         <p id="flashcard-count">Number of cards: {cardSet.length}</p>
       </div>
+
       <div className="flashcard-container">
-        <div className="flashcard" >
-          <div id={cardSet.category}>
-            <div>
-              <h2>{cardSet.question}</h2>
-              
+        <div className="flashcard" onClick={flipCard}>
+        <div id={currentCard.category}>
+          { isFlipped===false?(
+            <>
+              <div className="question">
+              <h2>{currentCard.question}</h2>
               {
-              cardSet.category==="vocabulary"?(
-              <img src={cardSet.image} alt={cardSet.question} />)
+              currentCard.category==="vocabulary"?(
+              <img src={currentCard.image} alt={currentCard.answer} />)
               :(<></>)
               }
               </div>
-            <div>
-              
+            <div className="question">
               {
-              cardSet.category==="conjugation"?(
-              <img src={cardSet.image} alt={cardSet.answer} />)
+              currentCard.category==="conjugation"?(
+              <img src={currentCard.image} alt={currentCard.answer} />)
               :(<></>)
             } 
-              <h2>{cardSet.answer}</h2>
             </div>
+            </>
+          ):(
+            <div className="answer">
+              <h2>{currentCard.answer}</h2>
+            </div>)}
           </div>
         </div>
       </div>
 
-      
+
       <div className="button-container">
-        <button id="previous-button">Previous</button>
-        <button id="next-button">Next</button>
-      </div>
+        <button id="previous-button" onClick={backButton}>Previous</button>
+        <button id="next-button" onclock={nextButton}>Next</button>
+      </div> 
 
     </>
   );
